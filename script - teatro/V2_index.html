@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reserva de Assentos - As Maravilhas de Alice</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* PALETA INSPIRADA NO VESTIDO DA ALICE */
+            --azul-alice-vestido: #5DADE2; 
+            --azul-alice-fundo: #D6EAF8;    
+            --azul-alice-escuro: #1B4F72;   
+            --azul-alice-hover: #2874A6;
+            
+            /* PALETA ROSA TEMA DA ESCOLA */
+            --rosa-escola-detalhe: #F48FB1; 
+            --rosa-escola-escuro: #E91E63;  
+            
+            /* ESTADOS DOS ASSENTOS E NEUTROS */
+            --verde-livre: #48BB78;
+            --cinza-ocupado: #A0AEC0;
+            --branco: #FFFFFF;
+            --borda: #D6DBDF;
+            --cinza-fundo: #F8FAFC; 
+        }
+
+        body { 
+            font-family: 'Nunito', sans-serif; 
+            text-align: center; 
+            background-color: var(--azul-alice-fundo); 
+            color: var(--azul-alice-escuro);
+            padding: 20px 10px; 
+            margin: 0;
+        }
+
+        /* CABEÇALHO */
+        .header-container {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start; 
+            gap: 20px; 
+            width: 100%;
+            max-width: 850px; 
+            margin: 0 auto 20px auto; 
+        }
+
+        .logo-escola {
+            max-height: 80px; 
+            border-radius: 50%; 
+            box-shadow: 0 4px 12px rgba(27, 79, 114, 0.15); 
+            object-fit: cover;
+            border: 3px solid var(--branco);
+        }
+
+        .header-text {
+            text-align: left;
+        }
+
+        .header-text .apresenta {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 0;
+            color: var(--azul-alice-escuro);
+            font-weight: 600;
+        }
+        
+        h2 {
+            font-size: 2rem; 
+            margin: 2px 0; 
+            font-weight: 900;
+            color: var(--azul-alice-escuro);
+            text-shadow: 1px 1px 3px rgba(27, 79, 114, 0.1);
+        }
+
+        .header-text .direcao {
+            font-size: 0.9rem;
+            margin: 0;
+            font-style: italic;
+            color: var(--azul-alice-escuro);
+        }
+
+        /* CONTÊINER PRINCIPAL */
+        .form-unificado {
+            background-color: var(--branco);
+            width: 100%;
+            max-width: 850px; 
+            margin: 0 auto;
+            padding: 20px; 
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(27, 79, 114, 0.12);
+            border-top: 6px solid var(--rosa-escola-detalhe);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-sizing: border-box;
+        }
+
+        /* SEÇÃO DE INFORMAÇÕES DO ESPETÁCULO */
+        .espetaculo-info {
+            width: 100%;
+            background-color: var(--cinza-fundo);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid var(--borda);
+            box-sizing: border-box;
+            text-align: left;
+        }
+
+        .grid-info-evento {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 10px;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px dashed var(--borda);
+        }
+
+        .info-item {
+            font-size: 0.9rem;
+            color: var(--azul-alice-escuro);
+        }
+
+        .info-item strong {
+            color: var(--rosa-escola-escuro);
+        }
+
+        .sinopse {
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin: 0 0 10px 0;
+            color: #34495E;
+        }
+
+        .chamada {
+            font-size: 0.95rem;
+            font-weight: 800;
+            margin: 0;
+            color: var(--azul-alice-escuro);
+            text-align: center;
+        }
+
+        /* DADOS DA RESERVA */
+        .sessao-dados {
+            width: 100%;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 2px dashed var(--borda);
+        }
+
+        .sessao-dados h3, .cabecalho-mapa h3, .sessao-confirmacao h3 {
+            margin-top: 0;
+            font-size: 1.2rem;
+            color: var(--azul-alice-escuro);
+            text-align: left;
+            margin-bottom: 10px;
+        }
+
+        .grid-inputs {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            width: 100%;
+        }
+
+        .campo-grupo {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 4px;
+        }
+
+        .campo-grupo label {
+            font-weight: 800;
+            font-size: 0.85rem;
+            color: var(--azul-alice-escuro);
+        }
+
+        input { 
+            width: 100%; 
+            padding: 10px; 
+            box-sizing: border-box; 
+            border: 2px solid var(--borda);
+            border-radius: 6px;
+            font-family: 'Nunito', sans-serif;
+            font-size: 0.95rem;
+            color: var(--azul-alice-escuro);
+            transition: border-color 0.3s;
+            background-color: #FAFAFA;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--rosa-escola-detalhe);
+            background-color: var(--branco);
+        }
+
+        /* MAPA DE ASSENTOS */
+        .sessao-mapa {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 2px dashed var(--borda);
+        }
+
+        .cabecalho-mapa {
+            width: 100%;
+            text-align: left;
+            margin-bottom: 15px;
+        }
+
+        .aviso-limite-mapa {
+            font-size: 0.85rem;
+            color: var(--rosa-escola-escuro);
+            margin: -5px 0 0 0;
+            font-weight: 600;
+        }
+
+        /* AJUSTE PARA O SCROLL FUNCIONAR CORRETAMENTE */
+        .area-teatro {
+            display: block; /* Mudado de flex para block */
+            text-align: center; /* Centraliza o conteúdo interno (palco e mapa) */
+            background-color: #FAFAFA;
+            padding: 0 15px 15px 15px; 
+            border-radius: 10px;
+            border: 2px solid var(--borda);
+            overflow-x: auto; /* Habilita a barra de rolagem */
+            width: 100%; 
+            box-sizing: border-box;
+            -webkit-overflow-scrolling: touch; 
+        }
+
+        .palco {
+            background-color: var(--azul-alice-escuro);
+            color: var(--branco);
+            width: 60%;
+            max-width: 300px;
+            padding: 8px;
+            border-radius: 0 0 10px 10px; 
+            font-size: 1.1rem;
+            font-weight: 900;
+            letter-spacing: 2px;
+            margin: 0 auto 15px auto; /* Centraliza o palco em relação à área */
+            box-shadow: 0 4px 10px rgba(27, 79, 114, 0.15);
+            border-bottom: 4px solid var(--rosa-escola-detalhe);
+        }
+
+        /* Wrapper do gerador-mapa para manter os blocos alinhados sem quebrar */
+        #gerador-mapa {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            padding-bottom: 10px;
+        }
+
+        .fileira {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px; 
+            margin-bottom: 4px; 
+            min-width: max-content;
+        }
+
+        .bloco-assentos {
+            display: flex;
+            gap: 2px; 
+        }
+
+        .bloco-esq { justify-content: flex-end; }
+        .bloco-cen { justify-content: center; }
+        .bloco-dir { justify-content: flex-start; }
+
+        .poltrona {
+            width: 22px; 
+            height: 22px; 
+            background-color: var(--verde-livre);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 8px; 
+            font-weight: 800;
+            color: white; 
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+            user-select: none;
+            flex-shrink: 0;
+            touch-action: manipulation; 
+        }
+
+        .poltrona.invisivel {
+            visibility: hidden;
+            pointer-events: none;
+            box-shadow: none;
+        }
+
+        .poltrona:not(.invisivel):hover { 
+            transform: scale(1.15);
+            background-color: #38A169;
+        }
+        
+        .poltrona.ocupada {
+            background-color: var(--cinza-ocupado); 
+            cursor: not-allowed;
+            box-shadow: none;
+            opacity: 0.8;
+        }
+        .poltrona.ocupada:hover { transform: none; }
+        
+        .poltrona.selecionada {
+            background-color: var(--rosa-escola-escuro); 
+            transform: scale(1.1);
+            box-shadow: 0 0 0 2px var(--azul-alice-vestido);
+        }
+
+        .dica-mobile {
+            display: none;
+            font-size: 0.8rem;
+            color: #718096;
+            margin-top: 10px;
+            font-style: italic;
+        }
+
+        /* LEGENDA */
+        .legenda {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            font-weight: 700;
+            background: var(--cinza-fundo);
+            padding: 8px 20px;
+            border-radius: 50px;
+            color: var(--azul-alice-escuro);
+            border: 1px solid var(--borda);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+            margin-top: 15px;
+            flex-wrap: wrap; 
+        }
+
+        .item-legenda { display: flex; align-items: center; gap: 6px; font-size: 0.85rem; }
+        .box-legenda { width: 14px; height: 14px; border-radius: 3px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+        .box-livre { background-color: var(--verde-livre); }
+        .box-selecionada { background-color: var(--rosa-escola-escuro); }
+        .box-ocupada { background-color: var(--cinza-ocupado); }
+
+        /* CONFIRMAÇÃO */
+        .sessao-confirmacao {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .sessao-confirmacao p {
+            background-color: var(--cinza-fundo); 
+            border: 1px solid var(--borda); 
+            padding: 12px 15px;
+            border-radius: 8px;
+            font-size: 1rem;
+            margin-top: 0;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        #assentos-lista { color: var(--rosa-escola-escuro); font-weight: 800; font-size: 1.1rem; display: block; margin-top: 5px;}
+
+        button { 
+            width: 100%;
+            max-width: 350px;
+            padding: 14px; 
+            background-color: var(--azul-alice-escuro); 
+            color: var(--branco); 
+            border: none; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-size: 1rem; 
+            font-weight: 800;
+            font-family: 'Nunito', sans-serif;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+            box-shadow: 0 4px 6px rgba(27, 79, 114, 0.15);
+        }
+
+        button:hover { 
+            background-color: var(--azul-alice-hover); 
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(27, 79, 114, 0.25);
+        }
+
+        #loading { 
+            display: none; 
+            background-color: #FEFCBF; 
+            color: #975A16; 
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-weight: 800; 
+            font-size: 0.9rem;
+            margin: 0 auto 15px auto; 
+            width: fit-content;
+        }
+
+        /* REGRAS ESPECÍFICAS PARA CELULARES */
+        @media (max-width: 768px) {
+            .header-container { flex-direction: column; gap: 10px; text-align: center; }
+            .header-text { text-align: center; }
+            .cabecalho-mapa { text-align: center; }
+            .cabecalho-mapa h3 { text-align: center; }
+            .sessao-confirmacao h3 { text-align: center; }
+            .dica-mobile { display: block; } 
+            .poltrona { width: 24px; height: 24px; font-size: 9px; } 
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header-container">
+        <img src="Logo_escola.jpg" alt="Logo Espaço Jessyca Rominna" class="logo-escola">
+        <div class="header-text">
+            <p class="apresenta">Espaço Jessyca Rominna Apresenta:</p>
+            <h2>As Maravilhas de Alice</h2>
+            <p class="direcao">Direção: Jessyca Rominna</p>
+        </div>
+    </div>
+    
+    <div id="loading">Processando... Aguarde!</div>
+
+    <div class="form-unificado">
+        
+        <div class="espetaculo-info">
+            <div class="grid-info-evento">
+                <div class="info-item"><strong>📅 Data:</strong> 18 de Dezembro de 2026</div>
+                <div class="info-item"><strong>🕒 Horário:</strong> 18:00</div>
+                <div class="info-item"><strong>📍 Local:</strong> Teatro Madre Esperança Garrido</div>
+            </div>
+            <p class="sinopse">
+                <em>As Maravilhas de Alice</em> é uma jornada de dança que transforma sonhos em mundos encantados. 
+                Inspirado no conto de Lewis Carroll, a pequena Alice sonha em "ser grande" não apenas em tamanho, 
+                mas em coragem, criatividade e aventura.
+            </p>
+            <p class="chamada">Traga a família, convide os amigos e venha descobrir mundos onde tudo é possível!</p>
+        </div>
+        
+        <div class="sessao-dados">
+            <h3>1. Dados da Reserva</h3>
+            <div class="grid-inputs">
+                <div class="campo-grupo">
+                    <label for="nomePai">Nome do Responsável</label>
+                    <input type="text" id="nomePai" placeholder="Ex: Jessyca Rominna" required>
+                </div>
+                <div class="campo-grupo">
+                    <label for="nomeFilha">Nome da Bailarina</label>
+                    <input type="text" id="nomeFilha" placeholder="Ex: Betina Bailarina" required>
+                </div>
+                <div class="campo-grupo">
+                    <label for="telefone">WhatsApp</label>
+                    <input type="text" id="telefone" placeholder="Ex: 62999999999" required>
+                </div>
+            </div>
+        </div>
+
+        <div class="sessao-mapa">
+            <div class="cabecalho-mapa">
+                <h3>2. Selecione os assentos</h3>
+                <p class="aviso-limite-mapa">Máximo de 6 assentos por reserva</p>
+            </div>
+
+            <div class="area-teatro">
+                <div class="palco">PALCO</div>
+                <div id="gerador-mapa"></div>
+            </div>
+            
+            <div class="dica-mobile">👈 Arraste para os lados para ver todo o mapa 👉</div>
+
+            <div class="legenda">
+                <div class="item-legenda"><div class="box-legenda box-livre"></div> Livre</div>
+                <div class="item-legenda"><div class="box-legenda box-selecionada"></div> Selecionada</div>
+                <div class="item-legenda"><div class="box-legenda box-ocupada"></div> Ocupada</div>
+            </div>
+        </div>
+
+        <div class="sessao-confirmacao">
+            <h3 style="align-self: flex-start;">3. Confirme seus Lugares</h3>
+            <p>
+                Assentos selecionados:<br><strong id="assentos-lista">Nenhum</strong>
+            </p>
+            <button onclick="enviarReserva()">Confirmar e Reservar</button>
+        </div>
+
+    </div>
+
+    <script>
+        const API_URL = 'https://script.google.com/macros/s/AKfycbysgCe5PxFBpZxAzIwk5c4MF8RcbTV5xUL1F9_u-9Y5vlL0nZBpNbYIzpkR50atXNDT/exec'; 
+        let poltronasEscolhidas = [];
+        const LIMITE_ASSENTOS = 6;
+
+        const estruturaTeatro = [
+            { row: 'A', esq: [31, 25], cen: [24, 9], dir: [8, 3] },
+            { row: 'B', esq: [31, 25], cen: [24, 9], dir: [8, 3] },
+            { row: 'C', esq: [31, 25], cen: [24, 9], dir: [8, 3] },
+            { row: 'D', esq: [31, 25], cen: [24, 9], dir: [8, 3] },
+            { row: 'E', esq: [31, 25], cen: [24, 9], dir: [8, 3] },
+            { row: 'F', esq: [31, 25], cen: [24, 9], dir: [8, 3] },
+            { row: 'G', esq: [31, 25], cen: [24, 9], dir: [8, 3] },
+            { row: 'H', esq: [31, 25], cen: [24, 9], dir: [8, 3] },
+            { row: 'I', esq: [31, 25], cen: [24, 9], dir: [8, 3] },
+            { corredor: true },
+            { row: 'J', esq: [32, 25], cen: [24, 9], dir: [8, 3] },
+            { row: 'K', esq: [32, 25], cen: [24, 9], dir: [8, 2] },
+            { row: 'L', esq: [33, 25], cen: [24, 9], dir: [8, 1] },
+            { row: 'M', esq: [33, 25], cen: [24, 9], dir: [8, 1] },
+            { row: 'N', esq: [33, 25], cen: [24, 9], dir: [8, 1] },
+            { row: 'O', esq: [33, 25], cen: [24, 9], dir: [8, 1] },
+            { row: 'P', esq: [38, 29], cen: [28, 11], dir: [10, 1] }
+        ];
+
+        const MAX_ESQ = 10; 
+        const MAX_CEN = 18; 
+        const MAX_DIR = 10; 
+
+        function desenharMapa() {
+            const containerMapa = document.getElementById('gerador-mapa');
+            
+            estruturaTeatro.forEach(linha => {
+                if (linha.corredor) {
+                    const espaco = document.createElement('div');
+                    espaco.style.height = '15px'; 
+                    containerMapa.appendChild(espaco);
+                    return;
+                }
+
+                const rowDiv = document.createElement('div');
+                rowDiv.className = 'fileira';
+
+                const criarBlocoAlinhado = (limites, alinhamento, maxCapacidade) => {
+                    const bloco = document.createElement('div');
+                    bloco.className = 'bloco-assentos ' + alinhamento;
+                    
+                    const qtdPoltronas = limites[0] - limites[1] + 1;
+                    const vagasVazias = maxCapacidade - qtdPoltronas;
+
+                    if (alinhamento === 'bloco-esq') {
+                        for(let j=0; j < vagasVazias; j++) {
+                            let ph = document.createElement('div');
+                            ph.className = 'poltrona invisivel';
+                            bloco.appendChild(ph);
+                        }
+                    }
+
+                    if (alinhamento === 'bloco-cen') {
+                        const vaziosLado = Math.floor(vagasVazias / 2);
+                        for(let j=0; j < vaziosLado; j++) {
+                            let ph = document.createElement('div');
+                            ph.className = 'poltrona invisivel';
+                            bloco.appendChild(ph);
+                        }
+                    }
+
+                    for (let i = limites[0]; i >= limites[1]; i--) {
+                        const numFormatado = i.toString().padStart(2, '0');
+                        const idAssento = linha.row + numFormatado;
+
+                        const assento = document.createElement('div');
+                        assento.className = 'poltrona';
+                        assento.id = idAssento;
+                        assento.innerText = idAssento; 
+                        assento.onclick = () => selecionarPoltrona(idAssento);
+
+                        bloco.appendChild(assento);
+                    }
+
+                    if (alinhamento === 'bloco-cen') {
+                        const vaziosLado = Math.floor(vagasVazias / 2);
+                        for(let j=0; j < vaziosLado; j++) {
+                            let ph = document.createElement('div');
+                            ph.className = 'poltrona invisivel';
+                            bloco.appendChild(ph);
+                        }
+                    }
+
+                    if (alinhamento === 'bloco-dir') {
+                        for(let j=0; j < vagasVazias; j++) {
+                            let ph = document.createElement('div');
+                            ph.className = 'poltrona invisivel';
+                            bloco.appendChild(ph);
+                        }
+                    }
+
+                    return bloco;
+                };
+
+                rowDiv.appendChild(criarBlocoAlinhado(linha.esq, 'bloco-esq', MAX_ESQ));
+                rowDiv.appendChild(criarBlocoAlinhado(linha.cen, 'bloco-cen', MAX_CEN));
+                rowDiv.appendChild(criarBlocoAlinhado(linha.dir, 'bloco-dir', MAX_DIR));
+
+                containerMapa.appendChild(rowDiv);
+            });
+        }
+
+        window.onload = function() {
+            desenharMapa();
+
+            fetch(API_URL)
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(item => {
+                    let elementoPoltrona = document.getElementById(item.poltrona);
+                    if(elementoPoltrona && item.status !== 'Livre') {
+                        elementoPoltrona.classList.add('ocupada');
+                    }
+                });
+            })
+            .catch(error => {
+                console.error("Não foi possível carregar os assentos ocupados:", error);
+            });
+        };
+
+        function selecionarPoltrona(idPoltrona) {
+            const elemento = document.getElementById(idPoltrona);
+            
+            if(elemento.classList.contains('ocupada')) return;
+
+            if(elemento.classList.contains('selecionada')) {
+                elemento.classList.remove('selecionada');
+                poltronasEscolhidas = poltronasEscolhidas.filter(p => p !== idPoltrona);
+            } else {
+                if (poltronasEscolhidas.length >= LIMITE_ASSENTOS) {
+                    alert(`Você atingiu o limite máximo de ${LIMITE_ASSENTOS} assentos por reserva.`);
+                    return;
+                }
+                
+                elemento.classList.add('selecionada');
+                poltronasEscolhidas.push(idPoltrona);
+            }
+
+            document.getElementById('assentos-lista').innerText = poltronasEscolhidas.length > 0 ? poltronasEscolhidas.join(', ') : 'Nenhum';
+        }
+
+        function enviarReserva() {
+            if(poltronasEscolhidas.length === 0) {
+                alert("Selecione pelo menos um assento no mapa!");
+                return;
+            }
+
+            const nomePai = document.getElementById('nomePai').value;
+            const nomeFilha = document.getElementById('nomeFilha').value;
+            const telefone = document.getElementById('telefone').value;
+
+            if(!nomePai || !nomeFilha || !telefone) {
+                alert("Por favor, preencha todos os dados no formulário acima do mapa.");
+                return;
+            }
+
+            document.getElementById('loading').innerText = "Processando reserva... Não feche a página.";
+            document.getElementById('loading').style.display = 'block';
+
+            const dados = {
+                poltronas: poltronasEscolhidas,
+                nomePai: nomePai,
+                nomeFilha: nomeFilha,
+                telefone: telefone
+            };
+
+            fetch(API_URL, {
+                method: 'POST',
+                body: JSON.stringify(dados)
+            })
+            .then(response => response.json())
+            .then(resposta => {
+                document.getElementById('loading').style.display = 'none';
+                if(resposta.sucesso) {
+                    alert(resposta.mensagem);
+                    location.reload(); 
+                } else {
+                    alert(resposta.mensagem);
+                    location.reload(); 
+                }
+            })
+            .catch(error => {
+                alert("Erro ao conectar com o servidor.");
+                document.getElementById('loading').style.display = 'none';
+            });
+        }
+    </script>
+</body>
+</html>
