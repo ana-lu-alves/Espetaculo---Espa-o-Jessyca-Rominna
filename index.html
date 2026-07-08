@@ -221,18 +221,25 @@
             font-weight: 600;
         }
 
-        /* AJUSTE PARA O SCROLL FUNCIONAR CORRETAMENTE */
-        .area-teatro {
-            display: block; /* Mudado de flex para block */
-            text-align: center; /* Centraliza o conteúdo interno (palco e mapa) */
+        /* NOVO: CONTAINER GLOBAL DO TEATRO PARA SEPARAR PALCO DO ROLAGEM HORIZONTAL */
+        .teatro-container {
+            width: 100%;
+            position: relative;
             background-color: #FAFAFA;
-            padding: 0 15px 15px 15px; 
             border-radius: 10px;
             border: 2px solid var(--borda);
-            overflow-x: auto; /* Habilita a barra de rolagem */
-            width: 100%; 
             box-sizing: border-box;
-            -webkit-overflow-scrolling: touch; 
+        }
+
+        /* NOVO: WRAPPER DO PALCO COM POSITION STICKY */
+        .palco-wrapper {
+            position: sticky;
+            top: 0; /* Fixa no topo ao rolar para baixo */
+            z-index: 100;
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            pointer-events: none; /* Permite clicar através dele nas beiradas */
         }
 
         .palco {
@@ -245,12 +252,23 @@
             font-size: 1.1rem;
             font-weight: 900;
             letter-spacing: 2px;
-            margin: 0 auto 15px auto; /* Centraliza o palco em relação à área */
-            box-shadow: 0 4px 10px rgba(27, 79, 114, 0.15);
+            margin: 0; 
+            box-shadow: 0 6px 12px rgba(27, 79, 114, 0.3); /* Sombra um pouco maior para destacar que flutua */
             border-bottom: 4px solid var(--rosa-escola-detalhe);
+            pointer-events: auto; /* Restaura os cliques no próprio palco */
         }
 
-        /* Wrapper do gerador-mapa para manter os blocos alinhados sem quebrar */
+        /* AJUSTE PARA O SCROLL FUNCIONAR CORRETAMENTE SÓ NAS CADEIRAS */
+        .area-teatro {
+            display: block; 
+            text-align: center; 
+            overflow-x: auto; 
+            width: 100%; 
+            box-sizing: border-box;
+            -webkit-overflow-scrolling: touch; 
+            padding: 20px 15px 15px 15px; /* Espaçamento ajustado */
+        }
+
         #gerador-mapa {
             display: inline-flex;
             flex-direction: column;
@@ -472,9 +490,14 @@
                 <p class="aviso-limite-mapa">Máximo de 6 assentos por reserva</p>
             </div>
 
-            <div class="area-teatro">
-                <div class="palco">PALCO</div>
-                <div id="gerador-mapa"></div>
+            <!-- MUDANÇA PRINCIPAL AQUI: NOVO CONTAINER PARA MANTER O PALCO FIXO -->
+            <div class="teatro-container">
+                <div class="palco-wrapper">
+                    <div class="palco">PALCO</div>
+                </div>
+                <div class="area-teatro">
+                    <div id="gerador-mapa"></div>
+                </div>
             </div>
             
             <div class="dica-mobile">👈 Arraste para os lados para ver todo o mapa 👉</div>
