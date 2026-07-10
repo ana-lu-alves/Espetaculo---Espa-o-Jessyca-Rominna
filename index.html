@@ -488,7 +488,7 @@
                 <div class="info-item"><strong>📍 Local:</strong> Teatro Madre Esperança Garrido</div>
             </div>
             <p class="sinopse">
-                <em>As Maravilhas de Alice</em> é uma jornada de dança que transforma sonhos em mundos encantados. 
+                <em>As Maravilhas de Alice</em> é uma jornada de dança que transforma sonhos in mundos encantados. 
                 Inspirado no conto de Lewis Carroll, a pequena Alice sonha em "ser grande" não apenas em tamanho, 
                 mas em coragem, criatividade e aventura.
             </p>
@@ -512,7 +512,7 @@
                 </div>
                 <div class="campo-grupo">
                     <label for="telefone">WhatsApp</label>
-                    <input type="text" id="telefone" placeholder="Ex: 62999999999" required>
+                    <input type="text" id="telefone" placeholder="Ex: (62) 99999-9999" required>
                 </div>
             </div>
         </div>
@@ -680,6 +680,21 @@
         window.onload = async function() {
             desenharMapa();
 
+            // Adiciona ouvinte para aplicar máscara de WhatsApp em tempo real
+            const inputTelefone = document.getElementById('telefone');
+            if (inputTelefone) {
+                inputTelefone.addEventListener('input', (e) => {
+                    let valor = e.target.value.replace(/\D/g, ""); // Remove tudo que não é número
+                    if (valor.length > 11) valor = valor.slice(0, 11); // Limita em 11 dígitos
+                    
+                    // Aplica a máscara dinamicamente (para fixos com 10 dígitos ou celulares com 11)
+                    valor = valor.replace(/^(\d{2})(\d)/g, "($1) $2");
+                    valor = valor.replace(/(\d)(\d{4})$/, "$1-$2");
+                    
+                    e.target.value = valor;
+                });
+            }
+
             try {
                 // Aguarda a promessa que já começou a rodar lá em cima
                 const data = await promessaAssentosOcupados;
@@ -735,11 +750,25 @@
 
             const nomePai = document.getElementById('nomePai').value;
             const nomeFilha = document.getElementById('nomeFilha').value;
-            const email = document.getElementById('email').value;
+            const email = document.getElementById('email').value.trim();
             const telefone = document.getElementById('telefone').value;
 
             if(!nomePai || !nomeFilha || !email || !telefone) {
                 alert("Por favor, preencha todos os dados no formulário acima do mapa.");
+                return;
+            }
+
+            // Validação estrita de e-mail (deve conter @, domínio e formato coerente)
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                alert("Por favor, insira um e-mail válido contendo '@' e um formato correto (Ex: seuemail@exemplo.com).");
+                return;
+            }
+
+            // Validação estrita do Telefone/WhatsApp (garante que possui o número mínimo de dígitos com DDD)
+            const numerosApenas = telefone.replace(/\D/g, "");
+            if (numerosApenas.length < 10 || numerosApenas.length > 11) {
+                alert("Por favor, insira um número de WhatsApp válido contendo DDD (10 ou 11 dígitos numéricos).");
                 return;
             }
 
