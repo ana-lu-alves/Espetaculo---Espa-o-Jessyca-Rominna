@@ -228,6 +228,9 @@
             border-radius: 10px;
             border: 2px solid var(--borda);
             box-sizing: border-box;
+            /* Inicia bloqueado para evitar cliques antes da API responder */
+            pointer-events: none; 
+            transition: opacity 0.3s ease;
         }
 
         .palco-wrapper {
@@ -312,23 +315,28 @@
             box-shadow: none;
         }
 
-        .poltrona:not(.invisivel):hover { 
+        .poltrona:not(.invisivel):not(.ocupada):not(.selecionada):hover { 
             transform: scale(1.15);
             background-color: #38A169;
         }
         
         .poltrona.ocupada {
-            background-color: var(--cinza-ocupado); 
+            background-color: var(--cinza-ocupado) !important; 
             cursor: not-allowed;
             box-shadow: none;
             opacity: 0.8;
         }
-        .poltrona.ocupada:hover { transform: none; }
+        .poltrona.ocupada:hover { 
+            transform: none; 
+        }
         
         .poltrona.selecionada {
-            background-color: var(--rosa-escola-escuro); 
+            background-color: var(--rosa-escola-escuro) !important; 
             transform: scale(1.1);
             box-shadow: 0 0 0 2px var(--azul-alice-vestido);
+        }
+        .poltrona.selecionada:hover {
+            transform: scale(1.15); 
         }
 
         .dica-mobile {
@@ -400,8 +408,16 @@
         }
 
         #sucesso {
-            background-color: #D4EDDA; /* Pílula verde suave */
-            color: #155724; /* Texto verde escuro */
+            background-color: #D4EDDA; 
+            color: #155724; 
+        }
+
+        /* PÍLULA DE SINCRONIZAÇÃO DO MAPA */
+        #sincronizando-mapa {
+            background-color: #EBF5FB;
+            color: #2874A6;
+            margin-bottom: 15px;
+            display: block; /* Visível por padrão ao abrir */
         }
 
         @keyframes fadeIn {
@@ -507,7 +523,9 @@
                 <p class="aviso-limite-mapa">Máximo de 6 assentos por reserva</p>
             </div>
 
-            <div class="teatro-container">
+            <div id="sincronizando-mapa" class="status-msg">Sincronizando mapa ao vivo... Aguarde!</div>
+
+            <div class="teatro-container" id="container-do-teatro">
                 <div class="palco-wrapper">
                     <div class="palco">PALCO</div>
                 </div>
@@ -534,7 +552,7 @@
             <div id="loading" class="status-msg">Processando reserva... Não feche a página.</div>
             <div id="sucesso" class="status-msg">Reserva realizada com sucesso!</div>
 
-            <button id="btn-confirmar" onclick="enviarReserva()">Confirmar e Reservar</button>
+            <button id="btn-confirmar" onclick="enviarReserva()" disabled>Confirmar e Reservar</button>
         </div>
 
     </div>
@@ -543,6 +561,15 @@
         // ATENÇÃO: COLE AQUI A URL GERADA NO GOOGLE APPS SCRIPT
         const API_URL = 'https://script.google.com/macros/s/AKfycbx8f82E2ssaJ0Bl4Q_RI7O5oYL76FKgSVQDEv_EvqUUuTHnAD7xD7j1nSvXGCmCFnZL/exec'; 
         
+        // NOVIDADE: INICIA A BUSCA NA API IMEDIATAMENTE!
+        // Não espera o HTML carregar, ganha tempo valioso.
+        const promessaAssentosOcupados = (API_URL !== 'SUA_URL_DO_GOOGLE_APPS_SCRIPT_AQUI') 
+            ? fetch(API_URL).then(res => res.json()).catch(err => {
+                console.error("Erro na pré-busca:", err);
+                return []; 
+            })
+            : Promise.resolve([]);
+
         let poltronasEscolhidas = [];
         const LIMITE_ASSENTOS = 6;
 
@@ -649,25 +676,29 @@
             });
         }
 
-        window.onload = function() {
+        // Quando a página terminar de desenhar o HTML
+        window.onload = async function() {
             desenharMapa();
 
-            // Evita buscar se a API não estiver configurada
-            if(API_URL === 'SUA_URL_DO_GOOGLE_APPS_SCRIPT_AQUI') return;
-
-            fetch(API_URL)
-            .then(response => response.json())
-            .then(data => {
+            try {
+                // Aguarda a promessa que já começou a rodar lá em cima
+                const data = await promessaAssentosOcupados;
+                
                 data.forEach(item => {
                     let elementoPoltrona = document.getElementById(item.poltrona);
                     if(elementoPoltrona && item.status !== 'Livre') {
                         elementoPoltrona.classList.add('ocupada');
                     }
                 });
-            })
-            .catch(error => {
-                console.error("Não foi possível carregar os assentos ocupados:", error);
-            });
+
+            } catch (error) {
+                console.error("Falha ao pintar as cadeiras ocupadas:", error);
+            } finally {
+                // Remove a mensagem de carregamento, libera cliques e ativa botão
+                document.getElementById('sincronizando-mapa').style.display = 'none';
+                document.getElementById('container-do-teatro').style.pointerEvents = 'auto';
+                document.getElementById('btn-confirmar').disabled = false;
+            }
         };
 
         function selecionarPoltrona(idPoltrona) {
@@ -712,7 +743,6 @@
                 return;
             }
 
-            // Oculta sucesso (caso estivesse visível de um erro anterior), mostra loading e desativa botão
             document.getElementById('sucesso').style.display = 'none';
             document.getElementById('loading').style.display = 'block';
             document.getElementById('btn-confirmar').disabled = true;
@@ -737,12 +767,10 @@
                 document.getElementById('loading').style.display = 'none';
                 
                 if(resposta.sucesso) {
-                    // Mostra a pílula verde de sucesso
                     const divSucesso = document.getElementById('sucesso');
                     divSucesso.innerText = resposta.mensagem || "Reserva realizada com sucesso!";
                     divSucesso.style.display = 'block';
                     
-                    // Aguarda 3 segundos para o usuário ver a mensagem antes de recarregar
                     setTimeout(() => {
                         location.reload(); 
                     }, 3000);
