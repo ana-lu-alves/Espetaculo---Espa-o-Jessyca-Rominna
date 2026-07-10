@@ -382,6 +382,33 @@
 
         #assentos-lista { color: var(--rosa-escola-escuro); font-weight: 800; font-size: 1.1rem; display: block; margin-top: 5px;}
 
+        /* MENSAGENS DE STATUS (PÍLULAS) */
+        .status-msg {
+            display: none; 
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-weight: 800; 
+            font-size: 0.9rem;
+            margin: 10px auto; 
+            width: fit-content;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        #loading { 
+            background-color: #FEFCBF; 
+            color: #975A16; 
+        }
+
+        #sucesso {
+            background-color: #D4EDDA; /* Pílula verde suave */
+            color: #155724; /* Texto verde escuro */
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         button { 
             width: 100%;
             max-width: 350px;
@@ -406,16 +433,11 @@
             box-shadow: 0 6px 15px rgba(27, 79, 114, 0.25);
         }
 
-        #loading { 
-            display: none; 
-            background-color: #FEFCBF; 
-            color: #975A16; 
-            padding: 10px 20px;
-            border-radius: 30px;
-            font-weight: 800; 
-            font-size: 0.9rem;
-            margin: 0 auto 15px auto; 
-            width: fit-content;
+        button:disabled {
+            background-color: var(--cinza-ocupado);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
         }
 
         /* REGRAS ESPECÍFICAS PARA CELULARES */
@@ -433,7 +455,6 @@
 <body>
 
     <div class="header-container">
-        <!-- Substitua pelo caminho real da logo se necessário -->
         <img src="Logo_escola.jpg" alt="Logo Espaço Jessyca Rominna" class="logo-escola" onerror="this.style.display='none'">
         <div class="header-text">
             <p class="apresenta">Espaço Jessyca Rominna Apresenta:</p>
@@ -441,8 +462,6 @@
             <p class="direcao">Direção: Jessyca Rominna</p>
         </div>
     </div>
-    
-    <div id="loading">Processando... Aguarde!</div>
 
     <div class="form-unificado">
         
@@ -471,7 +490,6 @@
                     <label for="nomeFilha">Nome da Bailarina</label>
                     <input type="text" id="nomeFilha" placeholder="Ex: Betina Bailarina" required>
                 </div>
-                <!-- CAMPO E-MAIL ADICIONADO AQUI -->
                 <div class="campo-grupo">
                     <label for="email">E-mail para Ingressos</label>
                     <input type="email" id="email" placeholder="Ex: email@exemplo.com" required>
@@ -512,7 +530,11 @@
             <p>
                 Assentos selecionados:<br><strong id="assentos-lista">Nenhum</strong>
             </p>
-            <button onclick="enviarReserva()">Confirmar e Reservar</button>
+
+            <div id="loading" class="status-msg">Processando reserva... Não feche a página.</div>
+            <div id="sucesso" class="status-msg">Reserva realizada com sucesso!</div>
+
+            <button id="btn-confirmar" onclick="enviarReserva()">Confirmar e Reservar</button>
         </div>
 
     </div>
@@ -682,7 +704,7 @@
 
             const nomePai = document.getElementById('nomePai').value;
             const nomeFilha = document.getElementById('nomeFilha').value;
-            const email = document.getElementById('email').value; // Novo campo
+            const email = document.getElementById('email').value;
             const telefone = document.getElementById('telefone').value;
 
             if(!nomePai || !nomeFilha || !email || !telefone) {
@@ -690,8 +712,10 @@
                 return;
             }
 
-            document.getElementById('loading').innerText = "Processando reserva... Não feche a página.";
+            // Oculta sucesso (caso estivesse visível de um erro anterior), mostra loading e desativa botão
+            document.getElementById('sucesso').style.display = 'none';
             document.getElementById('loading').style.display = 'block';
+            document.getElementById('btn-confirmar').disabled = true;
 
             const dados = {
                 poltronas: poltronasEscolhidas,
@@ -703,7 +727,6 @@
 
             fetch(API_URL, {
                 method: 'POST',
-                // Text/plain ajuda a evitar bloqueios de segurança "CORS" com Apps Script
                 headers: {
                     'Content-Type': 'text/plain;charset=utf-8',
                 },
@@ -712,10 +735,20 @@
             .then(response => response.json())
             .then(resposta => {
                 document.getElementById('loading').style.display = 'none';
+                
                 if(resposta.sucesso) {
-                    alert(resposta.mensagem);
-                    location.reload(); 
+                    // Mostra a pílula verde de sucesso
+                    const divSucesso = document.getElementById('sucesso');
+                    divSucesso.innerText = resposta.mensagem || "Reserva realizada com sucesso!";
+                    divSucesso.style.display = 'block';
+                    
+                    // Aguarda 3 segundos para o usuário ver a mensagem antes de recarregar
+                    setTimeout(() => {
+                        location.reload(); 
+                    }, 3000);
+
                 } else {
+                    document.getElementById('btn-confirmar').disabled = false;
                     alert(resposta.mensagem);
                     location.reload(); 
                 }
@@ -723,6 +756,7 @@
             .catch(error => {
                 alert("Erro ao conectar com o servidor. Verifique a URL do Google Apps Script.");
                 document.getElementById('loading').style.display = 'none';
+                document.getElementById('btn-confirmar').disabled = false;
             });
         }
     </script>
