@@ -221,7 +221,6 @@
             font-weight: 600;
         }
 
-        /* NOVO: CONTAINER GLOBAL DO TEATRO PARA SEPARAR PALCO DO ROLAGEM HORIZONTAL */
         .teatro-container {
             width: 100%;
             position: relative;
@@ -231,15 +230,14 @@
             box-sizing: border-box;
         }
 
-        /* NOVO: WRAPPER DO PALCO COM POSITION STICKY */
         .palco-wrapper {
             position: sticky;
-            top: 0; /* Fixa no topo ao rolar para baixo */
+            top: 0;
             z-index: 100;
             display: flex;
             justify-content: center;
             width: 100%;
-            pointer-events: none; /* Permite clicar através dele nas beiradas */
+            pointer-events: none;
         }
 
         .palco {
@@ -253,12 +251,11 @@
             font-weight: 900;
             letter-spacing: 2px;
             margin: 0; 
-            box-shadow: 0 6px 12px rgba(27, 79, 114, 0.3); /* Sombra um pouco maior para destacar que flutua */
+            box-shadow: 0 6px 12px rgba(27, 79, 114, 0.3);
             border-bottom: 4px solid var(--rosa-escola-detalhe);
-            pointer-events: auto; /* Restaura os cliques no próprio palco */
+            pointer-events: auto;
         }
 
-        /* AJUSTE PARA O SCROLL FUNCIONAR CORRETAMENTE SÓ NAS CADEIRAS */
         .area-teatro {
             display: block; 
             text-align: center; 
@@ -266,7 +263,7 @@
             width: 100%; 
             box-sizing: border-box;
             -webkit-overflow-scrolling: touch; 
-            padding: 20px 15px 15px 15px; /* Espaçamento ajustado */
+            padding: 20px 15px 15px 15px;
         }
 
         #gerador-mapa {
@@ -285,11 +282,7 @@
             min-width: max-content;
         }
 
-        .bloco-assentos {
-            display: flex;
-            gap: 2px; 
-        }
-
+        .bloco-assentos { display: flex; gap: 2px; }
         .bloco-esq { justify-content: flex-end; }
         .bloco-cen { justify-content: center; }
         .bloco-dir { justify-content: flex-start; }
@@ -440,7 +433,8 @@
 <body>
 
     <div class="header-container">
-        <img src="Logo_escola.jpg" alt="Logo Espaço Jessyca Rominna" class="logo-escola">
+        <!-- Substitua pelo caminho real da logo se necessário -->
+        <img src="Logo_escola.jpg" alt="Logo Espaço Jessyca Rominna" class="logo-escola" onerror="this.style.display='none'">
         <div class="header-text">
             <p class="apresenta">Espaço Jessyca Rominna Apresenta:</p>
             <h2>As Maravilhas de Alice</h2>
@@ -477,6 +471,11 @@
                     <label for="nomeFilha">Nome da Bailarina</label>
                     <input type="text" id="nomeFilha" placeholder="Ex: Betina Bailarina" required>
                 </div>
+                <!-- CAMPO E-MAIL ADICIONADO AQUI -->
+                <div class="campo-grupo">
+                    <label for="email">E-mail para Ingressos</label>
+                    <input type="email" id="email" placeholder="Ex: email@exemplo.com" required>
+                </div>
                 <div class="campo-grupo">
                     <label for="telefone">WhatsApp</label>
                     <input type="text" id="telefone" placeholder="Ex: 62999999999" required>
@@ -490,7 +489,6 @@
                 <p class="aviso-limite-mapa">Máximo de 6 assentos por reserva</p>
             </div>
 
-            <!-- MUDANÇA PRINCIPAL AQUI: NOVO CONTAINER PARA MANTER O PALCO FIXO -->
             <div class="teatro-container">
                 <div class="palco-wrapper">
                     <div class="palco">PALCO</div>
@@ -520,7 +518,9 @@
     </div>
 
     <script>
-        const API_URL = 'https://script.google.com/macros/s/AKfycbysgCe5PxFBpZxAzIwk5c4MF8RcbTV5xUL1F9_u-9Y5vlL0nZBpNbYIzpkR50atXNDT/exec'; 
+        // ATENÇÃO: COLE AQUI A URL GERADA NO GOOGLE APPS SCRIPT
+        const API_URL = 'https://script.google.com/macros/s/AKfycbx8f82E2ssaJ0Bl4Q_RI7O5oYL76FKgSVQDEv_EvqUUuTHnAD7xD7j1nSvXGCmCFnZL/exec'; 
+        
         let poltronasEscolhidas = [];
         const LIMITE_ASSENTOS = 6;
 
@@ -630,6 +630,9 @@
         window.onload = function() {
             desenharMapa();
 
+            // Evita buscar se a API não estiver configurada
+            if(API_URL === 'SUA_URL_DO_GOOGLE_APPS_SCRIPT_AQUI') return;
+
             fetch(API_URL)
             .then(response => response.json())
             .then(data => {
@@ -667,6 +670,11 @@
         }
 
         function enviarReserva() {
+            if(API_URL === 'SUA_URL_DO_GOOGLE_APPS_SCRIPT_AQUI') {
+                alert("Você precisa colar a URL do Google Apps Script no código primeiro!");
+                return;
+            }
+
             if(poltronasEscolhidas.length === 0) {
                 alert("Selecione pelo menos um assento no mapa!");
                 return;
@@ -674,9 +682,10 @@
 
             const nomePai = document.getElementById('nomePai').value;
             const nomeFilha = document.getElementById('nomeFilha').value;
+            const email = document.getElementById('email').value; // Novo campo
             const telefone = document.getElementById('telefone').value;
 
-            if(!nomePai || !nomeFilha || !telefone) {
+            if(!nomePai || !nomeFilha || !email || !telefone) {
                 alert("Por favor, preencha todos os dados no formulário acima do mapa.");
                 return;
             }
@@ -688,11 +697,16 @@
                 poltronas: poltronasEscolhidas,
                 nomePai: nomePai,
                 nomeFilha: nomeFilha,
+                email: email,
                 telefone: telefone
             };
 
             fetch(API_URL, {
                 method: 'POST',
+                // Text/plain ajuda a evitar bloqueios de segurança "CORS" com Apps Script
+                headers: {
+                    'Content-Type': 'text/plain;charset=utf-8',
+                },
                 body: JSON.stringify(dados)
             })
             .then(response => response.json())
@@ -707,7 +721,7 @@
                 }
             })
             .catch(error => {
-                alert("Erro ao conectar com o servidor.");
+                alert("Erro ao conectar com o servidor. Verifique a URL do Google Apps Script.");
                 document.getElementById('loading').style.display = 'none';
             });
         }
