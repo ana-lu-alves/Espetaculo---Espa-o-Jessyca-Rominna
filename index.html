@@ -34,6 +34,33 @@
             margin: 0;
         }
 
+        /* TELAS DE CONTROLE DO TOKEN */
+        .tela-token-status {
+            background-color: var(--branco);
+            width: 100%;
+            max-width: 550px;
+            margin: 60px auto;
+            padding: 40px 20px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(27, 79, 114, 0.12);
+            box-sizing: border-box;
+        }
+        .tela-token-status h2 {
+            margin-top: 0;
+            font-weight: 900;
+        }
+        #tela-erro-token {
+            border-top: 6px solid var(--rosa-escola-escuro);
+            display: none;
+        }
+        #tela-erro-token h2 {
+            color: var(--rosa-escola-escuro);
+        }
+        #tela-verificando-token {
+            border-top: 6px solid var(--azul-alice-vestido);
+            display: block;
+        }
+
         /* CABEÇALHO */
         .header-container {
             display: flex;
@@ -228,7 +255,6 @@
             border-radius: 10px;
             border: 2px solid var(--borda);
             box-sizing: border-box;
-            /* Inicia bloqueado para evitar cliques antes da API responder */
             pointer-events: none; 
             transition: opacity 0.3s ease;
         }
@@ -412,12 +438,11 @@
             color: #155724; 
         }
 
-        /* PÍLULA DE SINCRONIZAÇÃO DO MAPA */
         #sincronizando-mapa {
             background-color: #EBF5FB;
             color: #2874A6;
             margin-bottom: 15px;
-            display: block; /* Visível por padrão ao abrir */
+            display: block; 
         }
 
         @keyframes fadeIn {
@@ -470,108 +495,112 @@
 </head>
 <body>
 
-    <div class="header-container">
-        <img src="Logo_escola.jpg" alt="Logo Espaço Jessyca Rominna" class="logo-escola" onerror="this.style.display='none'">
-        <div class="header-text">
-            <p class="apresenta">Espaço Jessyca Rominna Apresenta:</p>
-            <h2>As Maravilhas de Alice</h2>
-            <p class="direcao">Direção: Jessyca Rominna</p>
-        </div>
+    <div id="tela-verificando-token" class="tela-token-status">
+        <h2>Validando seu convite...</h2>
+        <p>Por favor, aguarde um instante enquanto verificamos suas credenciais de acesso.</p>
     </div>
 
-    <div class="form-unificado">
-        
-        <div class="espetaculo-info">
-            <div class="grid-info-evento">
-                <div class="info-item"><strong>📅 Data:</strong> 18 de Dezembro de 2026</div>
-                <div class="info-item"><strong>🕒 Horário:</strong> 18:00</div>
-                <div class="info-item"><strong>📍 Local:</strong> Teatro Madre Esperança Garrido</div>
-            </div>
-            <p class="sinopse">
-                <em>As Maravilhas de Alice</em> é uma jornada de dança que transforma sonhos in mundos encantados. 
-                Inspirado no conto de Lewis Carroll, a pequena Alice sonha em "ser grande" não apenas em tamanho, 
-                mas em coragem, criatividade e aventura.
-            </p>
-            <p class="chamada">Traga a família, convide os amigos e venha descobrir mundos onde tudo é possível!</p>
-        </div>
-        
-        <div class="sessao-dados">
-            <h3>1. Dados da Reserva</h3>
-            <div class="grid-inputs">
-                <div class="campo-grupo">
-                    <label for="nomePai">Nome do Responsável</label>
-                    <input type="text" id="nomePai" placeholder="Ex: Jessyca Rominna" required>
-                </div>
-                <div class="campo-grupo">
-                    <label for="nomeFilha">Nome da Bailarina</label>
-                    <input type="text" id="nomeFilha" placeholder="Ex: Betina Bailarina" required>
-                </div>
-                <div class="campo-grupo">
-                    <label for="email">E-mail para Ingressos</label>
-                    <input type="email" id="email" placeholder="Ex: email@exemplo.com" required>
-                </div>
-                <div class="campo-grupo">
-                    <label for="telefone">WhatsApp</label>
-                    <input type="text" id="telefone" placeholder="Ex: (62) 99999-9999" required>
-                </div>
+    <div id="tela-erro-token" class="tela-token-status">
+        <h2>Acesso Não Autorizado</h2>
+        <p id="mensagem-erro-token">Este link de reserva é inválido ou já foi utilizado.</p>
+        <p style="font-size: 0.9rem; color: #555;">Caso precise de assistência, entre em contato diretamente com a direção da escola.</p>
+    </div>
+
+    <div id="conteudo-sistema" style="display: none;">
+        <div class="header-container">
+            <img src="Logo_escola.jpg" alt="Logo Espaço Jessyca Rominna" class="logo-escola" onerror="this.style.display='none'">
+            <div class="header-text">
+                <p class="apresenta">Espaço Jessyca Rominna Apresenta:</p>
+                <h2>As Maravilhas de Alice</h2>
+                <p class="direcao">Direção: Jessyca Rominna</p>
             </div>
         </div>
 
-        <div class="sessao-mapa">
-            <div class="cabecalho-mapa">
-                <h3>2. Selecione os assentos</h3>
-                <p class="aviso-limite-mapa">Máximo de 6 assentos por reserva</p>
-            </div>
-
-            <div id="sincronizando-mapa" class="status-msg">Sincronizando mapa ao vivo... Aguarde!</div>
-
-            <div class="teatro-container" id="container-do-teatro">
-                <div class="palco-wrapper">
-                    <div class="palco">PALCO</div>
+        <div class="form-unificado">
+            
+            <div class="espetaculo-info">
+                <div class="grid-info-evento">
+                    <div class="info-item"><strong>📅 Data:</strong> 18 de Dezembro de 2026</div>
+                    <div class="info-item"><strong>🕒 Horário:</strong> 18:00</div>
+                    <div class="info-item"><strong>📍 Local:</strong> Teatro Madre Esperança Garrido</div>
                 </div>
-                <div class="area-teatro">
-                    <div id="gerador-mapa"></div>
-                </div>
+                <p class="sinopse">
+                    <em>As Maravilhas de Alice</em> é uma jornada de dança que transforma sonhos em mundos encantados. 
+                    Inspirado no conto de Lewis Carroll, a pequena Alice sonha em "ser grande" não apenas em tamanho, 
+                    mas em coragem, criatividade e aventura.
+                </p>
+                <p class="chamada">Traga a família, convide os amigos e venha descobrir mundos onde tudo é possível!</p>
             </div>
             
-            <div class="dica-mobile">👈 Arraste para os lados para ver todo o mapa 👉</div>
-
-            <div class="legenda">
-                <div class="item-legenda"><div class="box-legenda box-livre"></div> Livre</div>
-                <div class="item-legenda"><div class="box-legenda box-selecionada"></div> Selecionada</div>
-                <div class="item-legenda"><div class="box-legenda box-ocupada"></div> Ocupada</div>
+            <div class="sessao-dados">
+                <h3>1. Dados da Reserva</h3>
+                <div class="grid-inputs">
+                    <div class="campo-grupo">
+                        <label for="nomePai">Nome do Responsável</label>
+                        <input type="text" id="nomePai" placeholder="Ex: Jessyca Rominna" required>
+                    </div>
+                    <div class="campo-grupo">
+                        <label for="nomeFilha">Nome da Bailarina</label>
+                        <input type="text" id="nomeFilha" placeholder="Ex: Betina Bailarina" required>
+                    </div>
+                    <div class="campo-grupo">
+                        <label for="email">E-mail para Ingressos</label>
+                        <input type="email" id="email" placeholder="Ex: email@exemplo.com" required>
+                    </div>
+                    <div class="campo-grupo">
+                        <label for="telefone">WhatsApp</label>
+                        <input type="text" id="telefone" placeholder="Ex: (62) 99999-9999" required>
+                    </div>
+                </div>
             </div>
+
+            <div class="sessao-mapa">
+                <div class="cabecalho-mapa">
+                    <h3>2. Selecione os assentos</h3>
+                    <p class="aviso-limite-mapa">Máximo de 6 assentos por reserva</p>
+                </div>
+
+                <div id="sincronizando-mapa" class="status-msg">Sincronizando mapa ao vivo... Aguarde!</div>
+
+                <div class="teatro-container" id="container-do-teatro">
+                    <div class="palco-wrapper">
+                        <div class="palco">PALCO</div>
+                    </div>
+                    <div class="area-teatro">
+                        <div id="gerador-mapa"></div>
+                    </div>
+                </div>
+                
+                <div class="dica-mobile">👈 Arraste para os lados para ver todo o mapa 👉</div>
+
+                <div class="legenda">
+                    <div class="item-legenda"><div class="box-legenda box-livre"></div> Livre</div>
+                    <div class="item-legenda"><div class="box-legenda box-selecionada"></div> Selecionada</div>
+                    <div class="item-legenda"><div class="box-legenda box-ocupada"></div> Ocupada</div>
+                </div>
+            </div>
+
+            <div class="sessao-confirmacao">
+                <h3 style="align-self: flex-start;">3. Confirme seus Lugares</h3>
+                <p>
+                    Assentos selecionados:<br><strong id="assentos-lista">Nenhum</strong>
+                </p>
+
+                <div id="loading" class="status-msg">Processando reserva... Não feche a página.</div>
+                <div id="sucesso" class="status-msg">Reserva realizada com sucesso!</div>
+
+                <button id="btn-confirmar" onclick="enviarReserva()" disabled>Confirmar e Reservar</button>
+            </div>
+
         </div>
-
-        <div class="sessao-confirmacao">
-            <h3 style="align-self: flex-start;">3. Confirme seus Lugares</h3>
-            <p>
-                Assentos selecionados:<br><strong id="assentos-lista">Nenhum</strong>
-            </p>
-
-            <div id="loading" class="status-msg">Processando reserva... Não feche a página.</div>
-            <div id="sucesso" class="status-msg">Reserva realizada com sucesso!</div>
-
-            <button id="btn-confirmar" onclick="enviarReserva()" disabled>Confirmar e Reservar</button>
-        </div>
-
     </div>
 
     <script>
-        // ATENÇÃO: COLE AQUI A URL GERADA NO GOOGLE APPS SCRIPT
         const API_URL = 'https://script.google.com/macros/s/AKfycbx8f82E2ssaJ0Bl4Q_RI7O5oYL76FKgSVQDEv_EvqUUuTHnAD7xD7j1nSvXGCmCFnZL/exec'; 
         
-        // NOVIDADE: INICIA A BUSCA NA API IMEDIATAMENTE!
-        // Não espera o HTML carregar, ganha tempo valioso.
-        const promessaAssentosOcupados = (API_URL !== 'SUA_URL_DO_GOOGLE_APPS_SCRIPT_AQUI') 
-            ? fetch(API_URL).then(res => res.json()).catch(err => {
-                console.error("Erro na pré-busca:", err);
-                return []; 
-            })
-            : Promise.resolve([]);
-
         let poltronasEscolhidas = [];
         const LIMITE_ASSENTOS = 6;
+        let tokenAtual = ""; // Variável que guardará o token ativo mundialmente
 
         const estruturaTeatro = [
             { row: 'A', esq: [31, 25], cen: [24, 9], dir: [8, 3] },
@@ -599,6 +628,7 @@
 
         function desenharMapa() {
             const containerMapa = document.getElementById('gerador-mapa');
+            containerMapa.innerHTML = ""; // Limpa para evitar duplicidades
             
             estruturaTeatro.forEach(linha => {
                 if (linha.corredor) {
@@ -676,40 +706,74 @@
             });
         }
 
-        // Quando a página terminar de desenhar o HTML
+        // PROCESSO INTEGRADO DE INICIALIZAÇÃO E VALIDAÇÃO DE ENTRADA
         window.onload = async function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            tokenAtual = urlParams.get('token');
+
+            const telaVerificando = document.getElementById('tela-verificando-token');
+            const telaErroToken = document.getElementById('tela-erro-token');
+            const msgErroToken = document.getElementById('mensagem-erro-token');
+            const conteudoSistema = document.getElementById('conteudo-sistema');
+
+            // Caso o usuário tente acessar sem passar ?token= na URL
+            if (!tokenAtual) {
+                telaVerificando.style.display = 'none';
+                msgErroToken.innerText = "Nenhum código de convite (token) foi detectado na URL. Para fazer sua reserva, utilize o link exclusivo fornecido pela escola.";
+                telaErroToken.style.display = 'block';
+                return;
+            }
+
             desenharMapa();
 
-            // Adiciona ouvinte para aplicar máscara de WhatsApp em tempo real
+            // Máscara do WhatsApp (Mantida intacta)
             const inputTelefone = document.getElementById('telefone');
             if (inputTelefone) {
                 inputTelefone.addEventListener('input', (e) => {
-                    let valor = e.target.value.replace(/\D/g, ""); // Remove tudo que não é número
-                    if (valor.length > 11) valor = valor.slice(0, 11); // Limita em 11 dígitos
-                    
-                    // Aplica a máscara dinamicamente (para fixos com 10 dígitos ou celulares com 11)
+                    let valor = e.target.value.replace(/\D/g, ""); 
+                    if (valor.length > 11) valor = valor.slice(0, 11); 
                     valor = valor.replace(/^(\d{2})(\d)/g, "($1) $2");
                     valor = valor.replace(/(\d)(\d{4})$/, "$1-$2");
-                    
                     e.target.value = valor;
                 });
             }
 
             try {
-                // Aguarda a promessa que já começou a rodar lá em cima
-                const data = await promessaAssentosOcupados;
-                
-                data.forEach(item => {
-                    let elementoPoltrona = document.getElementById(item.poltrona);
-                    if(elementoPoltrona && item.status !== 'Livre') {
-                        elementoPoltrona.classList.add('ocupada');
-                    }
-                });
+                // Consulta a API passando o Token recolhido da URL
+                const respostaServidor = await fetch(`${API_URL}?token=${encodeURIComponent(tokenAtual)}`);
+                const respostaJSON = await respostaServidor.json();
+
+                telaVerificando.style.display = 'none';
+
+                // Trata as respostas restritivas de bloqueio de preenchimento
+                if (respostaJSON.statusToken === "Usado") {
+                    msgErroToken.innerText = "Este link de convite já foi utilizado para concluir uma reserva. Não é permitido efetuar múltiplas reservas com o mesmo link.";
+                    telaErroToken.style.display = 'block';
+                    return;
+                } else if (respostaJSON.statusToken === "Invalido" || respostaJSON.erro) {
+                    msgErroToken.innerText = "O código de convite informado é inválido, expirou ou não consta na lista de presença autorizada.";
+                    telaErroToken.style.display = 'block';
+                    return;
+                }
+
+                // Se o token for "Disponível", exibe a tela e pinta as poltronas ocupadas
+                conteudoSistema.style.display = 'block';
+
+                if (respostaJSON.ocupados) {
+                    respostaJSON.ocupados.forEach(item => {
+                        let elementoPoltrona = document.getElementById(item.poltrona);
+                        if(elementoPoltrona && item.status !== 'Livre') {
+                            elementoPoltrona.classList.add('ocupada');
+                        }
+                    });
+                }
 
             } catch (error) {
-                console.error("Falha ao pintar as cadeiras ocupadas:", error);
+                console.error("Falha ao inicializar validação:", error);
+                telaVerificando.style.display = 'none';
+                msgErroToken.innerText = "Ocorreu uma falha crítica de conexão ao tentar validar seu convite. Por favor, cheque sua internet e tente recarregar.";
+                telaErroToken.style.display = 'block';
             } finally {
-                // Remove a mensagem de carregamento, libera cliques e ativa botão
                 document.getElementById('sincronizando-mapa').style.display = 'none';
                 document.getElementById('container-do-teatro').style.pointerEvents = 'auto';
                 document.getElementById('btn-confirmar').disabled = false;
@@ -718,7 +782,6 @@
 
         function selecionarPoltrona(idPoltrona) {
             const elemento = document.getElementById(idPoltrona);
-            
             if(elemento.classList.contains('ocupada')) return;
 
             if(elemento.classList.contains('selecionada')) {
@@ -729,20 +792,13 @@
                     alert(`Você atingiu o limite máximo de ${LIMITE_ASSENTOS} assentos por reserva.`);
                     return;
                 }
-                
                 elemento.classList.add('selecionada');
                 poltronasEscolhidas.push(idPoltrona);
             }
-
             document.getElementById('assentos-lista').innerText = poltronasEscolhidas.length > 0 ? poltronasEscolhidas.join(', ') : 'Nenhum';
         }
 
         function enviarReserva() {
-            if(API_URL === 'SUA_URL_DO_GOOGLE_APPS_SCRIPT_AQUI') {
-                alert("Você precisa colar a URL do Google Apps Script no código primeiro!");
-                return;
-            }
-
             if(poltronasEscolhidas.length === 0) {
                 alert("Selecione pelo menos um assento no mapa!");
                 return;
@@ -758,17 +814,15 @@
                 return;
             }
 
-            // Validação estrita de e-mail (deve conter @, domínio e formato coerente)
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(email)) {
-                alert("Por favor, insira um e-mail válido contendo '@' e um formato correto (Ex: seuemail@exemplo.com).");
+                alert("Por favor, insira um e-mail válido contendo '@' e um formato correto.");
                 return;
             }
 
-            // Validação estrita do Telefone/WhatsApp (garante que possui o número mínimo de dígitos com DDD)
             const numerosApenas = telefone.replace(/\D/g, "");
             if (numerosApenas.length < 10 || numerosApenas.length > 11) {
-                alert("Por favor, insira um número de WhatsApp válido contendo DDD (10 ou 11 dígitos numéricos).");
+                alert("Por favor, insira um número de WhatsApp válido contendo DDD.");
                 return;
             }
 
@@ -777,6 +831,7 @@
             document.getElementById('btn-confirmar').disabled = true;
 
             const dados = {
+                token: tokenAtual, // Passa o token ativo na URL para ser "queimado" no POST
                 poltronas: poltronasEscolhidas,
                 nomePai: nomePai,
                 nomeFilha: nomeFilha,
@@ -803,7 +858,6 @@
                     setTimeout(() => {
                         location.reload(); 
                     }, 3000);
-
                 } else {
                     document.getElementById('btn-confirmar').disabled = false;
                     alert(resposta.mensagem);
