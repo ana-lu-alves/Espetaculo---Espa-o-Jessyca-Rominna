@@ -505,8 +505,7 @@
         <p id="mensagem-erro-token">Este link de reserva é inválido ou já foi utilizado.</p>
         <p style="font-size: 0.9rem; color: #555;">Caso precise de assistência, entre em contato diretamente com a direção da escola.</p>
     </div>
-    
-<!-- TELA 4: SUCESSO DA RESERVA (Ficará escondida até o final) -->
+
     <div id="tela-sucesso-reserva" class="tela-token-status" style="display: none; border-top: 6px solid var(--verde-livre); text-align: center;">
         <h2 style="color: var(--verde-livre);">✅ Reserva Concluída!</h2>
         <p>Seus assentos foram reservados com sucesso na nossa base.</p>
@@ -515,7 +514,7 @@
         <p style="font-size: 0.95rem; color: #718096;">Você já pode fechar esta página e retornar ao WhatsApp.</p>
         <p style="font-size: 0.85rem; color: #A0AEC0;">Para sua segurança, este link de convite foi expirado e não poderá ser acessado novamente.</p>
     </div>
-    
+
     <div id="conteudo-sistema" style="display: none;">
         <div class="header-container">
             <img src="Logo_escola.jpg" alt="Logo Espaço Jessyca Rominna" class="logo-escola" onerror="this.style.display='none'">
@@ -610,7 +609,7 @@
         
         let poltronasEscolhidas = [];
         const LIMITE_ASSENTOS = 6;
-        let tokenAtual = ""; // Variável que guardará o token ativo mundialmente
+        let tokenAtual = ""; 
 
         const estruturaTeatro = [
             { row: 'A', esq: [31, 25], cen: [24, 9], dir: [8, 3] },
@@ -638,7 +637,7 @@
 
         function desenharMapa() {
             const containerMapa = document.getElementById('gerador-mapa');
-            containerMapa.innerHTML = ""; // Limpa para evitar duplicidades
+            containerMapa.innerHTML = ""; 
             
             estruturaTeatro.forEach(linha => {
                 if (linha.corredor) {
@@ -716,7 +715,6 @@
             });
         }
 
-        // PROCESSO INTEGRADO DE INICIALIZAÇÃO E VALIDAÇÃO DE ENTRADA
         window.onload = async function() {
             const urlParams = new URLSearchParams(window.location.search);
             tokenAtual = urlParams.get('token');
@@ -726,7 +724,6 @@
             const msgErroToken = document.getElementById('mensagem-erro-token');
             const conteudoSistema = document.getElementById('conteudo-sistema');
 
-            // Caso o usuário tente acessar sem passar ?token= na URL
             if (!tokenAtual) {
                 telaVerificando.style.display = 'none';
                 msgErroToken.innerText = "Nenhum código de convite (token) foi detectado na URL. Para fazer sua reserva, utilize o link exclusivo fornecido pela escola.";
@@ -736,7 +733,6 @@
 
             desenharMapa();
 
-            // Máscara do WhatsApp (Mantida intacta)
             const inputTelefone = document.getElementById('telefone');
             if (inputTelefone) {
                 inputTelefone.addEventListener('input', (e) => {
@@ -749,13 +745,11 @@
             }
 
             try {
-                // Consulta a API passando o Token recolhido da URL
                 const respostaServidor = await fetch(`${API_URL}?token=${encodeURIComponent(tokenAtual)}`);
                 const respostaJSON = await respostaServidor.json();
 
                 telaVerificando.style.display = 'none';
 
-                // Trata as respostas restritivas de bloqueio de preenchimento
                 if (respostaJSON.statusToken === "Usado") {
                     msgErroToken.innerText = "Este link de convite já foi utilizado para concluir uma reserva. Não é permitido efetuar múltiplas reservas com o mesmo link.";
                     telaErroToken.style.display = 'block';
@@ -766,7 +760,6 @@
                     return;
                 }
 
-                // Se o token for "Disponível", exibe a tela e pinta as poltronas ocupadas
                 conteudoSistema.style.display = 'block';
 
                 if (respostaJSON.ocupados) {
@@ -841,7 +834,7 @@
             document.getElementById('btn-confirmar').disabled = true;
 
             const dados = {
-                token: tokenAtual, // Passa o token ativo na URL para ser "queimado" no POST
+                token: tokenAtual, 
                 poltronas: poltronasEscolhidas,
                 nomePai: nomePai,
                 nomeFilha: nomeFilha,
@@ -861,13 +854,11 @@
                 document.getElementById('loading').style.display = 'none';
                 
                 if(resposta.sucesso) {
-                    const divSucesso = document.getElementById('sucesso');
-                    divSucesso.innerText = resposta.mensagem || "Reserva realizada com sucesso!";
-                    divSucesso.style.display = 'block';
+                    // Esconde todo o layout de formulário/mapas
+                    document.getElementById('conteudo-sistema').style.display = 'none';
                     
-                    setTimeout(() => {
-                        location.reload(); 
-                    }, 3000);
+                    // Exibe de forma fixa a nova tela de sucesso estruturada
+                    document.getElementById('tela-sucesso-reserva').style.display = 'block';
                 } else {
                     document.getElementById('btn-confirmar').disabled = false;
                     alert(resposta.mensagem);
